@@ -101,4 +101,32 @@ class ClientDto {
       complemento: complemento ?? this.complemento,
     );
   }
+
+  factory ClientDto.fromEntity(dynamic customer) {
+    // Usamos dynamic para evitar circular dependency ou importar a entidade se necessário
+    // Mas aqui podemos importar sem problemas se estiver no mesmo módulo
+    return ClientDto(
+      nomeCompleto: customer.nomeCompleto,
+      email: customer.email ?? '',
+      telefone: customer.telefone ?? '',
+      cpf: customer.cpf,
+      cnpj: customer.cnpj,
+      dataNascimento: customer.dataNascimento,
+      ocupacao: customer.ocupacao,
+      instagram: customer.instagram,
+      origem: customer.origem ?? 'whatsapp',
+      observacao: customer.observacao,
+      status: customer.status,
+      partyStatus: customer.partyStatus ?? 'active',
+      isCustomer: customer.isCustomer ?? false,
+      isSupplier: customer.isSupplier ?? false,
+      cep: customer.enderecoResidencial?.cep,
+      logradouro: customer.enderecoResidencial?.rua,
+      numero: customer.enderecoResidencial?.numero,
+      bairro: customer.enderecoResidencial?.bairro,
+      cidade: customer.enderecoResidencial?.cidade,
+      estado: customer.enderecoResidencial?.estado,
+      complemento: customer.enderecoResidencial?.complemento,
+    );
+  }
 }

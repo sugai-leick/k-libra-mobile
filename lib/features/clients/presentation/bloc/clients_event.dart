@@ -15,3 +15,8 @@ class AddClientEvent extends ClientsEvent {
   final CustomerEntity customer;
   AddClientEvent(this.customer);
 }
+
+class DeleteClientEvent extends ClientsEvent {
+  final String clientId;
+  DeleteClientEvent(this.clientId);
+}

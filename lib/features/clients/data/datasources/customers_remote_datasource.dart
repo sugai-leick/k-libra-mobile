@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_app/core/failures/clients_failure.dart';
 import 'package:flutter_app/core/services/http_service.dart';
 import 'package:flutter_app/features/clients/data/models/customer_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -59,8 +60,6 @@ class CustomersRemoteDataSource implements ICustomersRemoteDataSource {
     //refreshCount();
   }
 
-
-
   @override
   Future<void> updateCustomer(CustomerModel customer) async {
     await _httpService.put(
@@ -71,56 +70,26 @@ class CustomersRemoteDataSource implements ICustomersRemoteDataSource {
 
   @override
   Future<void> deleteCustomer(String id) async {
-    await _httpService.delete('/customers/$id');
+    try {
+      await _httpService.delete('/customers/$id');
+    } catch (e) {
+      throw ClientsFailure(
+        msg: 'Não foi possível remover o cliente selecionado!',
+      );
+    }
   }
 
   @override
   Stream<int> getTotalCustomers() {
-    final query = _supabase
+    return _supabase
         .from(_tableName)
         .stream(primaryKey: ['id'])
-        .map((total) => total.length);
-
-    // final controller = StreamController<int>();
-
-    // Future<void> syncCount() async {
-    //   if (controller.isClosed) return;
-    //   try {
-    //     final res = await _supabase.from(_tableName).select('id');
-    //     final count = (res as List).length;
-    //     controller.add(count);
-    //   } catch (e) {
-    //     print('[Realtime] Erro sync: $e');
-    //   }
-    // }
-
-    // // 1. Ouvintes de mudança (Realtime + Manual Refresh + Polling)
-    // final channel = _supabase.channel('public:$_tableName');
-    // channel
-    //     .onPostgresChanges(
-    //       event: PostgresChangeEvent.all,
-    //       schema: 'public',
-    //       table: _tableName,
-    //       callback: (_) => syncCount(),
-    //     )
-    //     .subscribe();
-
-    // final refreshSub = _refreshTrigger.stream.listen((_) => syncCount());
-    // final timer = Timer.periodic(
-    //   const Duration(seconds: 30),
-    //   (_) => syncCount(),
-    // );
-
-    // // Carga inicial
-    // syncCount();
-
-    // controller.onCancel = () {
-    //   channel.unsubscribe();
-    //   refreshSub.cancel();
-    //   timer.cancel();
-    //   controller.close();
-    // };
-
-    return query;
+        .map((total) => total.length)
+        .handleError((error) {
+          if (error is AuthException) {
+            throw ClientsFailure(msg: error.message);
+          }
+          throw ClientsFailure(msg: 'Não foi possível se conectar');
+        });
   }
 }

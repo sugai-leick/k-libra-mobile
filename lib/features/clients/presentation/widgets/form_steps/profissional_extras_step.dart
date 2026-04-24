@@ -73,9 +73,11 @@ class _ProfissionalExtrasStepState extends State<ProfissionalExtrasStep> {
                 value: _ocupacao,
                 isExpanded: true,
                 dropdownColor: Theme.of(context).cardColor,
-                items: const [
-                  DropdownMenuItem(value: 'dentista', child: Text('Dentista')),
-                  DropdownMenuItem(value: 'protesico', child: Text('Protético')),
+                items: [
+                  const DropdownMenuItem(value: 'dentista', child: Text('Dentista')),
+                  const DropdownMenuItem(value: 'protesico', child: Text('Protético')),
+                  if (_ocupacao != 'dentista' && _ocupacao != 'protesico')
+                    DropdownMenuItem(value: _ocupacao, child: Text(_ocupacao)),
                 ],
                 onChanged: (val) => setState(() => _ocupacao = val!),
               ),
@@ -104,11 +106,13 @@ class _ProfissionalExtrasStepState extends State<ProfissionalExtrasStep> {
                 value: _origem,
                 isExpanded: true,
                 dropdownColor: Theme.of(context).cardColor,
-                items: const [
-                  DropdownMenuItem(value: 'whatsapp', child: Text('WhatsApp')),
-                  DropdownMenuItem(value: 'instagram', child: Text('Instagram')),
-                  DropdownMenuItem(value: 'indicacao', child: Text('Indicação')),
-                  DropdownMenuItem(value: 'outros', child: Text('Outros')),
+                items: [
+                  const DropdownMenuItem(value: 'whatsapp', child: Text('WhatsApp')),
+                  const DropdownMenuItem(value: 'instagram', child: Text('Instagram')),
+                  const DropdownMenuItem(value: 'indicacao', child: Text('Indicação')),
+                  const DropdownMenuItem(value: 'outros', child: Text('Outros')),
+                  if (_origem != 'whatsapp' && _origem != 'instagram' && _origem != 'indicacao' && _origem != 'outros')
+                    DropdownMenuItem(value: _origem, child: Text('Importado: $_origem')),
                 ],
                 onChanged: (val) => setState(() => _origem = val!),
               ),
@@ -201,13 +205,29 @@ class _ProfissionalExtrasStepState extends State<ProfissionalExtrasStep> {
                       ),
                       child: Container(
                         alignment: Alignment.center,
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('Finalizar Cadastro', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                            SizedBox(width: 8),
-                            Icon(LucideIcons.check, color: Colors.white, size: 20),
-                          ],
+                        child: BlocBuilder<FormularioClientesBloc, FormularioClientGlobalState>(
+                          builder: (context, state) {
+                            final isEditing = state.editingClientId != null;
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  isEditing ? 'Salvar Alterações' : 'Finalizar Cadastro',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Icon(
+                                  isEditing ? LucideIcons.save : LucideIcons.check,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ),
                     ),

@@ -90,6 +90,7 @@ class CustomersRepositoryImpl implements ICustomersRepository {
   Future<Either<Failure, void>> updateCustomer(CustomerEntity customer) async {
     try {
       final model = CustomerModel(
+        id: customer.id,
         nomeCompleto: customer.nomeCompleto,
         email: customer.email,
         telefone: customer.telefone,

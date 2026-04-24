@@ -31,13 +31,7 @@ class _AddClientPageState extends State<AddClientPage> {
       ),
       body: SafeArea(
         child: BlocProvider<FormularioClientesBloc>(
-          create: (context) {
-            final bloc = sl<FormularioClientesBloc>();
-            if (widget.client != null) {
-              bloc.add(EditarClienteEvent(customer: widget.client!));
-            }
-            return bloc;
-          },
+          create: (context) => sl<FormularioClientesBloc>(param1: widget.client),
           child: BlocConsumer<FormularioClientesBloc, FormularioClientGlobalState>(
             builder: (context, state) {
               return AnimatedSwitcher(

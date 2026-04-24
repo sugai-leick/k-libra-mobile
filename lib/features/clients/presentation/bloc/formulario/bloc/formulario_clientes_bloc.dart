@@ -15,7 +15,13 @@ class FormularioClientesBloc
   FormularioClientesBloc({
     required this.createCustomerUseCase,
     required this.updateCustomerUseCase,
-  }) : super(FormularioClientGlobalState()) {
+    CustomerEntity? initialCustomer,
+  }) : super(initialCustomer != null 
+          ? FormularioClientGlobalState(
+              clientDto: ClientDto.fromEntity(initialCustomer),
+              editingClientId: initialCustomer.id,
+            ) 
+          : FormularioClientGlobalState()) {
     on<DadosIdentificacaoEvent>(_dadosIdentificacao);
     on<DocumentosEvent>(_documentos);
     on<EnderecoEvent>(_endereco);
@@ -92,32 +98,8 @@ class FormularioClientesBloc
     Emitter<FormularioClientGlobalState> emit,
   ) {
     final c = event.customer;
-    final dto = ClientDto(
-      nomeCompleto: c.nomeCompleto,
-      email: c.email ?? '',
-      telefone: c.telefone ?? '',
-      cpf: c.cpf,
-      cnpj: c.cnpj,
-      dataNascimento: c.dataNascimento,
-      ocupacao: c.ocupacao,
-      instagram: c.instagram,
-      origem: c.origem ?? 'whatsapp',
-      observacao: c.observacao,
-      status: c.status,
-      partyStatus: c.partyStatus ?? 'active',
-      isCustomer: c.isCustomer ?? false,
-      isSupplier: c.isSupplier ?? false,
-      cep: c.enderecoResidencial?.cep,
-      logradouro: c.enderecoResidencial?.rua,
-      numero: c.enderecoResidencial?.numero,
-      bairro: c.enderecoResidencial?.bairro,
-      cidade: c.enderecoResidencial?.cidade,
-      estado: c.enderecoResidencial?.estado,
-      complemento: c.enderecoResidencial?.complemento,
-    );
-
     emit(state.copyWith(
-      clientDto: dto,
+      clientDto: ClientDto.fromEntity(c),
       editingClientId: c.id,
       sessaoAtual: FormSection.dadosIdentificacao,
       stepAtual: 1,

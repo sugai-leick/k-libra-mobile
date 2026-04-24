@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/features/clients/domain/entities/customer_entity.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'client_card_content.dart';
 
 class ClientCardItem extends StatefulWidget {
@@ -56,45 +57,85 @@ class _ClientCardItemState extends State<ClientCardItem> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() => _dragExtent = 0);
-                        widget.onEdit();
-                      },
-                      child: Container(
-                        width: 70,
-                        height: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.blueAccent.withValues(alpha: 0.15),
-                          borderRadius: const BorderRadius.horizontal(
-                            left: Radius.circular(4),
-                          ),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() => _dragExtent = 0);
+                          widget.onEdit();
+                        },
+                        borderRadius: const BorderRadius.horizontal(
+                          left: Radius.circular(4),
                         ),
-                        child: const Icon(
-                          Icons.edit_note_rounded,
-                          color: Colors.blueAccent,
-                          size: 24,
+                        child: Container(
+                          width: 70,
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent.withValues(alpha: 0.15),
+                            borderRadius: const BorderRadius.horizontal(
+                              left: Radius.circular(4),
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.edit_note_rounded,
+                                color: Colors.blueAccent,
+                                size: 24,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Editar',
+                                style: GoogleFonts.inter(
+                                  color: Colors.blueAccent,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() => _dragExtent = 0);
-                        widget.onDelete();
-                      },
-                      child: Container(
-                        width: 70,
-                        height: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent.withValues(alpha: 0.15),
-                          borderRadius: const BorderRadius.horizontal(
-                            right: Radius.circular(16),
-                          ),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() => _dragExtent = 0);
+                          widget.onDelete();
+                        },
+                        borderRadius: const BorderRadius.horizontal(
+                          right: Radius.circular(16),
                         ),
-                        child: const Icon(
-                          Icons.delete_outline_rounded,
-                          color: Colors.redAccent,
-                          size: 24,
+                        child: Container(
+                          width: 70,
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.redAccent.withValues(alpha: 0.15),
+                            borderRadius: const BorderRadius.horizontal(
+                              right: Radius.circular(16),
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.delete_outline_rounded,
+                                color: Colors.redAccent,
+                                size: 24,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Excluir',
+                                style: GoogleFonts.inter(
+                                  color: Colors.redAccent,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -104,12 +145,12 @@ class _ClientCardItemState extends State<ClientCardItem> {
             ),
           ),
           // Content Layer (Sliding)
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onHorizontalDragUpdate: _onHorizontalDragUpdate,
-            onHorizontalDragEnd: _onHorizontalDragEnd,
-            child: Transform.translate(
-              offset: Offset(_dragExtent, 0),
+          Transform.translate(
+            offset: Offset(_dragExtent, 0),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragUpdate: _onHorizontalDragUpdate,
+              onHorizontalDragEnd: _onHorizontalDragEnd,
               child: ClientCardContent(client: widget.client),
             ),
           ),

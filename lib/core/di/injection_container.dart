@@ -25,6 +25,7 @@ import 'package:flutter_app/features/fiscal/domain/repositories/fiscal_repositor
 import 'package:flutter_app/features/clients/data/datasources/customers_remote_datasource.dart';
 import 'package:flutter_app/features/clients/data/repositories/customers_repository_impl.dart';
 import 'package:flutter_app/features/clients/domain/repositories/customers_repository.dart';
+import 'package:flutter_app/features/clients/domain/entities/customer_entity.dart';
 import 'package:flutter_app/features/clients/domain/usecases/customers_usecases.dart';
 import 'package:flutter_app/features/clients/presentation/bloc/clients_bloc.dart';
 import 'package:flutter_app/features/clients/presentation/bloc/total_clients_card_bloc.dart';
@@ -152,13 +153,18 @@ Future<void> init() async {
   );
 
   sl.registerFactory<ClientsBloc>(
-    () => ClientsBloc(getCustomersUseCase: sl(), createCustomerUseCase: sl()),
+    () => ClientsBloc(
+      getCustomersUseCase: sl(),
+      createCustomerUseCase: sl(),
+      deleteCustomerUseCase: sl(),
+    ),
   );
 
-  sl.registerFactory<FormularioClientesBloc>(
-    () => FormularioClientesBloc(
+  sl.registerFactoryParam<FormularioClientesBloc, CustomerEntity?, void>(
+    (customer, _) => FormularioClientesBloc(
       createCustomerUseCase: sl<CreateCustomerUseCase>(),
       updateCustomerUseCase: sl<UpdateCustomerUseCase>(),
+      initialCustomer: customer,
     ),
   );
 
