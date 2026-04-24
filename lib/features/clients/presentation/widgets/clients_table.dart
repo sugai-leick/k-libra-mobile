@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'client_card_item.dart';
 import '../pages/add_client_page.dart';
+import 'package:flutter/services.dart';
 
 class ClientsTable extends StatelessWidget {
   final List<CustomerEntity> clients;
@@ -40,7 +41,10 @@ class ClientsTable extends StatelessWidget {
               ),
             );
           },
-          onDelete: () => _showDeleteConfirmation(context, client),
+          onDelete: () {
+            HapticFeedback.heavyImpact();
+            _showDeleteConfirmation(context, client);
+          },
         );
       },
     );
