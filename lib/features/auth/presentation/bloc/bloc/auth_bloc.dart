@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_app/core/network/auth_event_bus.dart';
 import 'package:flutter_app/core/services/supabase_session_manager.dart';
 import 'package:flutter_app/core/services/http_service.dart';
+import 'package:flutter_app/core/services/remember_email_service.dart';
 import 'package:flutter_app/features/auth/domain/entities/auth_user.dart';
 import 'package:flutter_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:flutter_app/features/auth/domain/usecases/logout_usecase.dart';
@@ -20,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final ITokenService tokenService;
   final SupabaseSessionManager supabaseSessionManager;
   final HttpService httpService;
+  final IRememberEmailService rememberEmailService;
   StreamSubscription? _authEventSubscription;
 
   AuthBloc({
@@ -28,7 +30,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.tokenService,
     required this.supabaseSessionManager,
     required this.httpService,
+    required this.rememberEmailService,
   }) : super(AuthInitial()) {
+    on<AuthCheckRememberedEmailRequested>(_onCheckRememberedEmail);
     
     // Escuta eventos globais de autenticação (ex: 401 Unauthorized do Interceptor)
     _authEventSubscription = AuthEventBus().stream.listen((event) {
@@ -113,6 +117,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         },
       );
     });
+  }
+
+  Future<void> _onCheckRememberedEmail(
+    AuthCheckRememberedEmailRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    try {
+      final email = await rememberEmailService.getEmail();
+      emit(AuthInitial(rememberedEmail: email));
+    } catch (_) {
+      emit(AuthInitial());
+    }
   }
 
   @override

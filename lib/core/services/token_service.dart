@@ -12,6 +12,7 @@ abstract class ITokenService {
   Future<void> deleteToken();
   Future<void> clearTokens();
   Future<bool> hasToken();
+
 }
 
 class TokenService implements ITokenService {
@@ -20,6 +21,7 @@ class TokenService implements ITokenService {
   static const String _refreshTokenKey = 'refresh_token';
   String? _sessionToken;
   String? _sessionRefreshToken;
+
 
   TokenService(this._storage);
 
@@ -81,4 +83,6 @@ class TokenService implements ITokenService {
     final token = await getToken();
     return token != null && token.isNotEmpty;
   }
+
+
 }

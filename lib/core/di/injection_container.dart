@@ -1,3 +1,4 @@
+import 'package:flutter_app/core/services/remember_email_service.dart';
 import 'package:flutter_app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:flutter_app/features/inventory/data/datasources/inventory_remote_datasource.dart';
 import 'package:flutter_app/features/inventory/data/repositories/inventory_repository_impl.dart';
@@ -66,6 +67,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton(() => AuthInterceptor(sl()));
   sl.registerLazySingleton(() => HttpService(sl(), sl()));
+  sl.registerLazySingleton<IRememberEmailService>(
+    () => RememberEmailService(storage: sl<FlutterSecureStorage>()),
+  );
 
   // Supabase — usa a instância singleton já inicializada no main.dart
   // Isso garante que a sessão setada pelo SessionManager vale em todos os datasources
@@ -88,7 +92,10 @@ Future<void> init() async {
 
   // Data Sources
   sl.registerLazySingleton<IAuthRemoteDataSource>(
-    () => AuthRemoteDataSource(sl()),
+    () => AuthRemoteDataSource(
+      httpService: sl<HttpService>(),
+      rememberEmailService: sl<IRememberEmailService>(),
+    ),
   );
 
   // Usecases
@@ -109,6 +116,7 @@ Future<void> init() async {
       tokenService: sl<ITokenService>(),
       supabaseSessionManager: sl<SupabaseSessionManager>(),
       httpService: sl<HttpService>(),
+      rememberEmailService: sl<IRememberEmailService>(),
     ),
   );
 

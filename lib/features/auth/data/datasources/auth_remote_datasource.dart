@@ -1,6 +1,7 @@
 import 'package:flutter_app/core/contracts/success.dart';
 import 'package:flutter_app/core/failures/app_exception.dart';
 import 'package:flutter_app/core/services/http_service.dart';
+import 'package:flutter_app/core/services/remember_email_service.dart';
 import 'package:flutter_app/features/auth/data/models/auth_model.dart';
 import 'package:flutter_app/features/auth/domain/usecases/params/login_params.dart';
 import 'package:dio/dio.dart';
@@ -12,8 +13,11 @@ abstract class IAuthRemoteDataSource {
 
 class AuthRemoteDataSource implements IAuthRemoteDataSource {
   final HttpService _httpService;
+  final IRememberEmailService _rememberEmailService;
 
-  AuthRemoteDataSource(this._httpService);
+  AuthRemoteDataSource({required httpService, required rememberEmailService})
+    : _httpService = httpService,
+      _rememberEmailService = rememberEmailService;
 
   @override
   Future<AuthModel> login(LoginParams params) async {
@@ -24,7 +28,8 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        
+        //save the email to fast login after success
+        _rememberEmailService.saveEmail(params.email);
         return AuthModel.fromJson(response.data as Map<String, dynamic>);
       } else {
         throw AppException(
