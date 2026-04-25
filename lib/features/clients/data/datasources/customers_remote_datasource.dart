@@ -84,6 +84,7 @@ class CustomersRemoteDataSource implements ICustomersRemoteDataSource {
     return _supabase
         .from(_tableName)
         .stream(primaryKey: ['id'])
+        .eq('is_active', true)
         .map((total) => total.length)
         .handleError((error) {
           if (error is AuthException) {
