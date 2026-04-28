@@ -85,12 +85,14 @@ class CustomersRemoteDataSource implements ICustomersRemoteDataSource {
         .from(_tableName)
         .stream(primaryKey: ['id'])
         .eq('is_active', true)
-        .map((total) => total.length)
-        .handleError((error) {
+        .map((data) {
+          return data.length;
+        })
+        .handleError((error, stackTrace) {
           if (error is AuthException) {
-            throw ClientsFailure(msg: error.message);
+            throw Exception(error.message);
           }
-          throw ClientsFailure(msg: 'Não foi possível se conectar');
+          throw Exception('Não foi possível se conectar');
         });
   }
 }

@@ -53,14 +53,16 @@ class AuthRepositoryImpl implements IAuthRepository {
   @override
   Future<Either<Failure, Success>> logout() async {
     try {
+      // Tenta avisar a API, mas não bloqueia o logout se falhar
       await remoteDataSource.logout();
-      // Limpa sessão do Supabase e tokens locais
+    } catch (e) {
+      // Apenas logamos ou ignoramos erro de rede no logout
+    } finally {
+      // Limpa sessão do Supabase e tokens locais SEMPRE
       await supabaseSessionManager.clearSession();
       await tokenService.clearTokens();
-      return Right(Success(msg: 'Logout realizado com sucesso'));
-    } catch (e) {
-      return Left(LogoutFailure(msg: e.toString()));
     }
+    return Right(Success(msg: 'Logout realizado com sucesso'));
   }
 
   @override

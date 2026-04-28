@@ -24,7 +24,6 @@ class SupabaseSessionManager {
 
       // Hack para o SDK considerar que existe um usuário logado (libera o .accessToken)
       // Usamos o setSession mas passando o token como se fosse a sessão atual
-      // Se a versão for a 2.x, tentamos o recoverSession ou setSession(token)
       try {
         await _supabaseClient.auth.setSession(refreshToken ?? accessToken);
       } catch (e) {

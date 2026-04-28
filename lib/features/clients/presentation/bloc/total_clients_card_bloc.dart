@@ -28,6 +28,7 @@ class TotalClientsCardBloc
     await emit.forEach<Either<Failure, int>>(
       totalCustomersUsecase(NoParams()),
       onData: (either) {
+        
         return either.fold(
           (failure) =>
               state.copyWith(error: failure.toString(), isLoading: false),
