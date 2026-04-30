@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_app/core/services/http_service.dart';
 import 'package:flutter_app/core/usecase/params/no_params.dart';
 import 'package:flutter_app/features/products/data/model/product_model.dart';
@@ -14,7 +15,7 @@ class ProductsSource implements IProductsSource {
   @override
   Future<List<ProductModel>> getProducts(NoParams params) async {
     final result = await _httpService.get('products');
-    print(result);
+    debugPrint('Product Source info >>  ${result}');
     return [];
   }
 }
