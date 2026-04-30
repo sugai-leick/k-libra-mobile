@@ -1,14 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_app/core/failures/failure.dart';
 
-/// Contrato para Casos de Uso (Usecases) que retornam um Future.
-///
-/// Use esta classe para operações assíncronas que seguem o padrão [Either]
-/// do dartz para tratamento de erros [Failure] no lado esquerdo e o
-/// [ReturnType] no lado direito.
-///
-/// [Params] - O objeto que contém os parâmetros necessários para o caso de uso.
-/// [ReturnType] - O tipo de dado retornado em caso de sucesso.
+
 abstract class Usecase<Params, ReturnType> {
   /// Executa a lógica de negócio do caso de uso.
   Future<Either<Failure, ReturnType>> call(Params params);

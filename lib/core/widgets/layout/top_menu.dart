@@ -64,6 +64,7 @@ class TopMenu extends StatelessWidget {
       groupName: 'Sistema',
       items: [
         NavMenuItem(icon: Icons.support_agent_rounded, label: 'Suporte'),
+        NavMenuItem(icon: Icons.category_rounded, label: 'Produtos'),
       ],
     ),
   ];

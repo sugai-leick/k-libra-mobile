@@ -18,7 +18,7 @@ import 'package:flutter_app/features/financial/presentation/pages/strategic_fina
 import 'package:flutter_app/features/reports/presentation/pages/reports_page.dart';
 import 'package:flutter_app/features/goals/presentation/pages/goals_page.dart';
 import 'package:flutter_app/features/insights/presentation/pages/insights_page.dart';
-
+import 'package:flutter_app/features/products/presentation/pages/products_page.dart';
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
 
@@ -46,6 +46,7 @@ class _MainLayoutState extends State<MainLayout> {
     const InsightsPage(),
     const FiscalPage(),
     const SupportPage(),
+    const ProductsPage(),
   ];
 
   @override
