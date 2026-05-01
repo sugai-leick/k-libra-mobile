@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/core/theme/app_colors.dart';
-import 'package:flutter_app/features/products/domain/usecases/params/create_product_params.dart';
-import 'package:flutter_app/features/products/domain/usecases/params/create_product_variant_params.dart';
+import 'package:flutter_app/features/products/presentation/widgets/dtos/product_dto.dart';
 
 class ProductFormModal extends StatefulWidget {
-  final Function(CreateProductParams) onSave;
+  final Function(ProductDto) onSave;
 
   const ProductFormModal({super.key, required this.onSave});
 
   static Future<void> show(
     BuildContext context, {
-    required Function(CreateProductParams) onSave,
+    required Function(ProductDto) onSave,
   }) {
     return showGeneralDialog(
       context: context,
@@ -69,7 +68,7 @@ class _ProductFormModalState extends State<ProductFormModal> {
   // Variantes
   final _varNomeController = TextEditingController();
   final _varCodigoController = TextEditingController();
-  final List<CreateProductVariantParams> _variants = [];
+  final List<ProductVariant> _variants = [];
 
   bool _isLoading = false;
 
@@ -85,7 +84,7 @@ class _ProductFormModalState extends State<ProductFormModal> {
     }
     setState(() {
       _variants.add(
-        CreateProductVariantParams(
+        ProductVariant(
           nome: _varNomeController.text,
           codigo: _varCodigoController.text,
           atributo: 'Variante',
@@ -107,10 +106,13 @@ class _ProductFormModalState extends State<ProductFormModal> {
 
     setState(() => _isLoading = true);
 
-    final params = CreateProductParams(
+    final params = ProductDto(
       nome: _nomeController.text,
       descricao: _descricaoController.text,
-      tipo: _tipo,
+      tipo: ProductType.values.firstWhere(
+        (e) => e.name == _tipo,
+        orElse: () => ProductType.consumivel,
+      ),
       ncm: _ncmController.text,
       origemFiscal: _origemFiscal,
       cfopPadrao: _cfopController.text,

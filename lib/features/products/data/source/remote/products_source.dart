@@ -14,8 +14,21 @@ class ProductsSource implements IProductsSource {
   ProductsSource({required httpService}) : _httpService = httpService;
   @override
   Future<List<ProductModel>> getProducts(NoParams params) async {
-    final result = await _httpService.get('products');
-    debugPrint('Product Source info >>  ${result}');
-    return [];
+    try {
+      final response = await _httpService.get('products');
+      
+      // A resposta (response.data) é uma lista, então precisamos fazer um loop/map
+      final List<dynamic> jsonList = response.data;
+      
+      final List<ProductModel> list = jsonList.map((json) {
+        return ProductModel.fromJson(json as Map<String, dynamic>);
+      }).toList();
+      
+      debugPrint('Product Source info >>  ${list.length} produtos carregados');
+      return list;
+    } catch (e) {
+      debugPrint('Product Source error >> $e');
+      rethrow;
+    }
   }
 }

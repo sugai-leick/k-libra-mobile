@@ -29,9 +29,9 @@ class ProductsPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          ProductFormModal.show(context, onSave: (params) async {
+          ProductFormModal.show(context, onSave: (dto) async {
             // TODO: call the usecase to create the product
-            print('Product to save: ${params.nome}');
+            print('Product to save: ${dto.nome}');
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Produto salvo com sucesso! (Mock)'), backgroundColor: Colors.green),
             );
