@@ -6,24 +6,30 @@ class HttpService {
   final Dio dio;
 
   HttpService(this.dio, AuthInterceptor authInterceptor) {
-    dio.options.baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:3001/api/v1';
+    dio.options.baseUrl =
+        dotenv.env['API_URL'] ?? 'http://localhost:3001/api/v1';
     dio.options.connectTimeout = const Duration(seconds: 10);
     dio.options.receiveTimeout = const Duration(seconds: 10);
-    
+
     dio.interceptors.add(authInterceptor);
-    dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: true,
-    )); // Útil para debug
+    dio.interceptors.add(
+      LogInterceptor(requestBody: true, responseBody: true),
+    ); // Útil para debug
   }
 
   // Métodos auxiliares para facilitar as chamadas em todo o app
-  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
+  //
+  Future<Response> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return await dio.get(path, queryParameters: queryParameters);
   }
 
   Future<Response> post(String path, {dynamic data}) async {
-    return await dio.post(path, data: data);
+    final request = await dio.post(path, data: data);
+    _handleStatus(request);
+    return request;
   }
 
   Future<Response> put(String path, {dynamic data}) async {
@@ -32,5 +38,28 @@ class HttpService {
 
   Future<Response> delete(String path) async {
     return await dio.delete(path);
+  }
+
+  void _handleStatus(Response response) {
+    switch (response.statusCode) {
+      case 200:
+      case 201:
+        return;
+
+      case 400:
+        throw Exception('Requisiçao Invalida');
+
+      case 401:
+        throw Exception('Usuario não autenticado');
+
+      case 404:
+        throw Exception('Não encontrado');
+
+      case 500:
+        throw Exception('Erro interno');
+
+      default:
+        throw Exception('Algo deu errado');
+    }
   }
 }

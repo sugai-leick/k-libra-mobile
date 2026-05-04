@@ -13,11 +13,19 @@ class ProductsPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.inventory_2_rounded, size: 64, color: Colors.white24),
+            const Icon(
+              Icons.inventory_2_rounded,
+              size: 64,
+              color: Colors.white24,
+            ),
             const SizedBox(height: 16),
             Text(
               'Hub de Produtos',
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -29,17 +37,29 @@ class ProductsPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          ProductFormModal.show(context, onSave: (dto) async {
-            // TODO: call the usecase to create the product
-            print('Product to save: ${dto.nome}');
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Produto salvo com sucesso! (Mock)'), backgroundColor: Colors.green),
-            );
-          });
+          ProductFormModal.show(
+            context,
+            onSave: (dto) async {
+              // TODO: call the usecase to create the product
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Produto salvo com sucesso! (Mock)'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            },
+          );
         },
         backgroundColor: const Color(0xFFA855F7), // primaryDark
         icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: Text('Novo Registro', style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold)),
+        label: Text(
+          'Novo Registro',
+          style: GoogleFonts.inter(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
