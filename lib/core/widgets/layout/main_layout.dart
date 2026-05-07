@@ -6,7 +6,7 @@ import 'package:flutter_app/features/dashboard/presentation/page/dashboard_page.
 
 import 'package:flutter_app/features/sales/presentation/pages/sales_page.dart';
 import 'package:flutter_app/features/payments/presentation/pages/payments_page.dart';
-import 'package:flutter_app/features/inventory/presentation/widgets/inventory_builder.dart';
+import 'package:flutter_app/features/inventory/presentation/pages/inventory_page.dart';
 import 'package:flutter_app/features/shipping/presentation/pages/shipping_page.dart';
 import 'package:flutter_app/features/fiscal/presentation/pages/fiscal_page.dart';
 import 'package:flutter_app/features/support/presentation/pages/support_page.dart';
@@ -33,7 +33,7 @@ class _MainLayoutState extends State<MainLayout> {
     const DashboardPage(),
     const SalesPage(),
     const ClientsBuilder(),
-    const InventoryBuilder(),
+    const InventoryPage(),
     const ShippingPage(),
     const PaymentsPage(),
     const ConciliationPage(),
