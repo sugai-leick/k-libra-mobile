@@ -1,4 +1,10 @@
 import 'package:flutter_app/core/services/remember_email_service.dart';
+import 'package:flutter_app/features/products/data/source/remote/products_source.dart';
+import 'package:flutter_app/features/products/data/repo/products_repo.dart';
+import 'package:flutter_app/features/products/domain/repo/i_products_repo.dart';
+import 'package:flutter_app/features/products/domain/usecases/create_product_usecase.dart';
+import 'package:flutter_app/features/products/domain/usecases/get_products_usecase.dart';
+import 'package:flutter_app/features/products/presentation/blocs/products_page/bloc/products_bloc.dart';
 import 'package:flutter_app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:flutter_app/features/inventory/data/datasources/inventory_remote_datasource.dart';
 import 'package:flutter_app/features/inventory/data/repositories/inventory_repository_impl.dart';
@@ -250,6 +256,26 @@ Future<void> init() async {
       fetchInventoryUseCase: sl(),
       addHardwareUseCase: sl(),
       inventoryTransactionUseCase: sl(),
+    ),
+  );
+
+  // Features - Products
+  sl.registerLazySingleton<IProductsSource>(
+    () => ProductsSource(httpService: sl<HttpService>()),
+  );
+  sl.registerLazySingleton<IProductsRepo>(
+    () => ProductsRepo(source: sl<IProductsSource>()),
+  );
+  sl.registerLazySingleton<CreateProductUsecase>(
+    () => CreateProductUsecase(repo: sl<IProductsRepo>()),
+  );
+  sl.registerLazySingleton<GetProductsUsecase>(
+    () => GetProductsUsecase(repo: sl<IProductsRepo>()),
+  );
+  sl.registerFactory<ProductsBloc>(
+    () => ProductsBloc(
+      createProduct: sl<CreateProductUsecase>(),
+      getProducts: sl<GetProductsUsecase>(),
     ),
   );
 }

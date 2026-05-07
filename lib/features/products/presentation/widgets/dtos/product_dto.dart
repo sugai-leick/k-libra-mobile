@@ -1,4 +1,4 @@
-enum ProductType { hardware, insumos, consumivel }
+enum ProductType { hardware, insumo, consumivel }
 
 class ProductDto {
   final String nome;

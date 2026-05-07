@@ -49,10 +49,10 @@ class ProductsRepo implements IProductsRepo {
   Future<Either<Failure, List<Product>>> getProducts(NoParams params) async {
     try {
       final result = await _source.getProducts(params);
-    } catch (e) {
-      //
+      return Right(result);
+    } on Exception catch (e) {
+      return Left(ProductFailure(msg: 'Erro ao buscar produtos: $e'));
     }
-    throw UnimplementedError();
   }
 
   @override

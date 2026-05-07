@@ -10,6 +10,7 @@ import 'package:flutter_app/features/clients/presentation/bloc/total_clients_car
 import 'package:flutter_app/features/sales/presentation/bloc/total_sales_card_bloc.dart';
 import 'core/di/injection_container.dart' as di;
 import 'core/theme/app_theme.dart';
+import 'package:flutter_app/features/products/presentation/blocs/products_page/bloc/products_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +48,9 @@ class KLibraApp extends StatelessWidget {
         BlocProvider(
           create: (context) =>
               di.sl<ClientsBloc>()..add(FetchClientsListEvent()),
+        ),
+        BlocProvider(
+          create: (context) => di.sl<ProductsBloc>()..add(FetchProductsEvent()), 
         ),
       ],
       child: MaterialApp(

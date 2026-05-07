@@ -15,3 +15,5 @@ class NewProductSubmitted extends ProductsEvent {
   @override
   List<Object> get props => [product];
 }
+
+class FetchProductsEvent extends ProductsEvent {}
