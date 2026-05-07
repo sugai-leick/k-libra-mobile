@@ -248,14 +248,20 @@ Future<void> init() async {
   sl.registerLazySingleton<InventoryRepository>(
     () => InventoryRepositoryImpl(remoteDatasource: sl()),
   );
-  sl.registerLazySingleton(() => FetchInventoryUseCase(sl()));
-  sl.registerLazySingleton(() => AddHardwareUseCase(sl()));
-  sl.registerLazySingleton(() => InventoryTransactionUseCase(sl()));
-  sl.registerFactory(
+  sl.registerLazySingleton<FetchInventoryUseCase>(
+    () => FetchInventoryUseCase(sl<InventoryRepository>()),
+  );
+  sl.registerLazySingleton<AddHardwareUseCase>(
+    () => AddHardwareUseCase(sl<InventoryRepository>()),
+  );
+  sl.registerLazySingleton<InventoryTransactionUseCase>(
+    () => InventoryTransactionUseCase(sl<InventoryRepository>()),
+  );
+  sl.registerFactory<InventoryBloc>(
     () => InventoryBloc(
-      fetchInventoryUseCase: sl(),
-      addHardwareUseCase: sl(),
-      inventoryTransactionUseCase: sl(),
+      fetchInventoryUseCase: sl<FetchInventoryUseCase>(),
+      addHardwareUseCase: sl<AddHardwareUseCase>(),
+      inventoryTransactionUseCase: sl<InventoryTransactionUseCase>(),
     ),
   );
 
