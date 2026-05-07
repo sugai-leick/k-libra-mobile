@@ -5,7 +5,8 @@ import 'package:flutter_app/features/products/presentation/widgets/dtos/product_
 import 'package:flutter_app/features/products/presentation/widgets/form_tabs/geral_tab.dart';
 import 'package:flutter_app/features/products/presentation/widgets/form_tabs/fiscal_tab.dart';
 import 'package:flutter_app/features/products/presentation/widgets/form_tabs/variantes_tab.dart';
-
+import 'package:flutter_app/features/products/presentation/widgets/product_form_header.dart';
+import 'package:flutter_app/features/products/presentation/widgets/product_form_footer.dart';
 class ProductFormModal extends StatefulWidget {
   final Function(ProductDto) onSave;
 
@@ -160,66 +161,11 @@ class _ProductFormModalState extends State<ProductFormModal> {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Header
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppColors.borderDark)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryDark.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.layers_rounded,
-                            color: AppColors.primaryDark,
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          'Cadastrar Novo Item',
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.close_rounded,
-                        color: Colors.white54,
-                        size: 20,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                      splashRadius: 20,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // Tabs
-                Row(
-                  children: [
-                    _buildTab(0, 'Geral', Icons.inventory_2_rounded),
-                    const SizedBox(width: 8),
-                    _buildTab(1, 'Fiscal', Icons.description_rounded),
-                    const SizedBox(width: 8),
-                    _buildTab(2, 'Variantes', Icons.sell_rounded),
-                  ],
-                ),
-              ],
-            ),
+          // Header
+          ProductFormHeader(
+            activeTab: _activeTab,
+            onTabChanged: (index) => setState(() => _activeTab = index),
+            onClose: () => Navigator.pop(context),
           ),
 
           // Content
@@ -237,64 +183,11 @@ class _ProductFormModalState extends State<ProductFormModal> {
           ),
 
           // Footer
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-              border: Border(top: BorderSide(color: AppColors.borderDark)),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.white.withValues(alpha: 0.05),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      'Descartar',
-                      style: GoogleFonts.inter(
-                        color: Colors.white70,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleSubmit,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: AppColors.primaryDark,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Text(
-                            'Cadastrar na Nuvem',
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                  ),
-                ),
-              ],
-            ),
+          // Footer
+          ProductFormFooter(
+            isLoading: _isLoading,
+            onCancel: () => Navigator.pop(context),
+            onSubmit: _handleSubmit,
           ),
         ],
       ),
@@ -330,36 +223,5 @@ class _ProductFormModalState extends State<ProductFormModal> {
     }
   }
 
-  Widget _buildTab(int index, String title, IconData icon) {
-    final isActive = _activeTab == index;
-    return GestureDetector(
-      onTap: () => setState(() => _activeTab = index),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isActive ? AppColors.primaryDark : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 14,
-              color: isActive ? Colors.white : Colors.white54,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              title,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: isActive ? Colors.white : Colors.white54,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 }
