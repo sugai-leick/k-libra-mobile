@@ -1,11 +1,17 @@
 import 'package:flutter_app/core/failures/app_exception.dart';
 import 'package:flutter_app/core/services/http_service.dart';
+import 'package:flutter_app/features/financial/data/models/dre_model.dart';
 import 'package:flutter_app/features/financial/data/models/financial_models.dart';
 
 abstract class IFinancialRemoteDataSource {
   Future<CashFlowModel> getCashFlow();
   Future<List<FinancialTransactionModel>> getTransactions();
   Future<void> addTransaction(FinancialTransactionModel transaction);
+  Future<DreModel> getStrategicData({
+    required String from,
+    required String to,
+    required String regime,
+  });
 }
 
 class FinancialRemoteDataSource implements IFinancialRemoteDataSource {
@@ -48,6 +54,32 @@ class FinancialRemoteDataSource implements IFinancialRemoteDataSource {
       final response = await _httpService.post('/financial-transactions', data: transaction.toJson());
       if (response.statusCode != 201) {
         throw AppException(message: 'Falha ao registrar transação.');
+      }
+    } catch (e) {
+      throw AppException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<DreModel> getStrategicData({
+    required String from,
+    required String to,
+    required String regime,
+  }) async {
+    try {
+      final response = await _httpService.get(
+        '/financial-transactions/dre',
+        queryParameters: {
+          'from': from,
+          'to': to,
+          'regime': regime,
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+        return DreModel.fromJson(data['data'] as Map<String, dynamic>);
+      } else {
+        throw AppException(message: 'Falha ao buscar dados estratégicos.');
       }
     } catch (e) {
       throw AppException(message: e.toString());

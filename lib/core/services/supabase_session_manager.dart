@@ -14,11 +14,13 @@ class SupabaseSessionManager {
     String? refreshToken,
   }) async {
     try {
-      debugPrint('[SupabaseSessionManager] Forçando sessão manual com JWT externo...');
+      debugPrint(
+        '[SupabaseSessionManager] Forçando sessão manual com JWT externo...',
+      );
 
       // Injeta nos headers do REST
       _supabaseClient.rest.headers['Authorization'] = 'Bearer $accessToken';
-      
+
       // Injeta no Realtime
       _supabaseClient.realtime.setAuth(accessToken);
 
@@ -30,9 +32,18 @@ class SupabaseSessionManager {
         debugPrint('[SupabaseSessionManager] Aviso no auth.setSession: $e');
       }
 
-      debugPrint('[SupabaseSessionManager] Sessão injetada. User: ${_supabaseClient.auth.currentUser?.email}');
-      debugPrint('[SupabaseSessionManager] Token atual no cliente: ${_supabaseClient.auth.currentSession?.accessToken != null ? 'OK' : 'NULL'}');
-      
+      debugPrint(
+        '[SupabaseSessionManager] Sessão injetada. User: ${_supabaseClient.auth.currentUser?.email}',
+      );
+      debugPrint(
+        '[SupabaseSessionManager] Token atual no cliente: ${_supabaseClient.auth.currentSession?.accessToken != null ? 'OK' : 'NULL'}',
+      );
+      debugPrint(
+        '[SupabaseSessionManager] Access Token: $accessToken',
+      );
+      debugPrint(
+        '[SupabaseSessionManager] Refresh Token: $refreshToken',
+      );
     } catch (e) {
       debugPrint('[SupabaseSessionManager] Erro ao injetar JWT: $e');
     }
@@ -50,11 +61,11 @@ class SupabaseSessionManager {
     try {
       // 1. Valida no Supabase
       await _supabaseClient.from('customers').select('id').limit(1);
-      
+
       // 2. Valida na API NestJS (fazendo um request simples de perfil ou similar)
       // Se não tiver um /auth/me, usamos o /customers que sabemos que exige auth
       await httpService.get('/customers', queryParameters: {'limit': 1});
-      
+
       return true;
     } catch (e) {
       return false;
@@ -70,5 +81,7 @@ class SupabaseSessionManager {
     }
   }
 
-  bool get hasActiveSession => _supabaseClient.auth.currentSession != null || _supabaseClient.rest.headers.containsKey('Authorization');
+  bool get hasActiveSession =>
+      _supabaseClient.auth.currentSession != null ||
+      _supabaseClient.rest.headers.containsKey('Authorization');
 }

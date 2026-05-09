@@ -4,6 +4,7 @@ import 'package:flutter_app/core/failures/failure.dart';
 import 'package:flutter_app/features/financial/data/datasources/financial_remote_datasource.dart';
 import 'package:flutter_app/features/financial/data/models/financial_models.dart';
 import 'package:flutter_app/features/financial/domain/entities/financial_entities.dart';
+import 'package:flutter_app/features/financial/domain/entities/dre_entity.dart';
 import 'package:flutter_app/features/financial/domain/repositories/financial_repository.dart';
 
 class FinancialRepositoryImpl implements IFinancialRepository {
@@ -48,6 +49,26 @@ class FinancialRepositoryImpl implements IFinancialRepository {
       );
       await remoteDataSource.addTransaction(model);
       return const Right(null);
+    } on AppException catch (e) {
+      return Left(ServerFailure(msg: e.message));
+    } catch (e) {
+      return Left(ServerFailure(msg: 'Erro inesperado: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, DreEntity>> getStrategicData({
+    required String from,
+    required String to,
+    required String regime,
+  }) async {
+    try {
+      final dreModel = await remoteDataSource.getStrategicData(
+        from: from,
+        to: to,
+        regime: regime,
+      );
+      return Right(dreModel);
     } on AppException catch (e) {
       return Left(ServerFailure(msg: e.message));
     } catch (e) {

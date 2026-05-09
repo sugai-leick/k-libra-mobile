@@ -1,155 +1,128 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_app/core/theme/app_colors.dart';
 import 'package:flutter_app/core/widgets/shared/module_header.dart';
-import 'package:flutter_app/core/widgets/shared/stat_card.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_app/features/financial/financial.dart';
+import 'package:intl/intl.dart';
 
-class StrategicFinancialPage extends StatelessWidget {
+class StrategicFinancialPage extends StatefulWidget {
   const StrategicFinancialPage({super.key});
 
   @override
+  State<StrategicFinancialPage> createState() => _StrategicFinancialPageState();
+}
+
+class _StrategicFinancialPageState extends State<StrategicFinancialPage> {
+  late String _from;
+  late String _to;
+  String _regime = 'cash'; // 'cash' or 'accrual'
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _from = DateFormat('yyyy-MM-01').format(now);
+    _to = DateFormat('yyyy-MM-dd').format(DateTime(now.year, now.month + 1, 0));
+
+    _fetchData();
+  }
+
+  void _fetchData() {
+    context.read<StrategicFinancialBloc>().add(
+          FetchStrategicDataRequested(
+            from: _from,
+            to: _to,
+            regime: _regime,
+          ),
+        );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Mock DRE Data
-    final dreRows = [
-      {'label': 'Receita Bruta', 'value': 285400.0, 'isHeader': true},
-      {'label': '(-) Impostos e Devoluções', 'value': -42810.0, 'isHeader': false},
-      {'label': 'Receita Líquida', 'value': 242590.0, 'isDivider': true},
-      {'label': '(-) Custos (CPV/CSP)', 'value': -98600.0, 'isHeader': false},
-      {'label': 'Margem de Contribuição', 'value': 143990.0, 'isDivider': true},
-      {'label': '(-) Despesas Fixas', 'value': -85000.0, 'isHeader': false},
-      {'label': 'EBITDA (LAJIDA)', 'value': 58990.0, 'isHeader': true, 'color': AppColors.success},
-    ];
+    return Scaffold(
+      backgroundColor: AppColors.backgroundDark,
+      body: BlocBuilder<StrategicFinancialBloc, StrategicFinancialState>(
+        builder: (context, state) {
+          DreEntity? dre;
+          bool isLoading = state is StrategicFinancialLoading;
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const ModuleHeader(
-            title: 'Finanças Estratégicas',
-            subtitle: 'Demonstrativo de Resultados (DRE) e análise de margem.',
-            buttonLabel: 'Exportar PDF',
-            buttonIcon: Icons.picture_as_pdf_rounded,
-          ),
+          if (state is StrategicFinancialLoaded) {
+            dre = state.dre;
+          }
 
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: StatCard(
-                    label: 'Margem Líquida',
-                    value: '20.6%',
-                    icon: Icons.percent_rounded,
-                    trend: '+2.1%',
-                    positive: true,
-                  ),
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    ModuleHeader(
+                      title: 'Finanças Estratégicas',
+                      subtitle: 'Demonstrativo de Resultados (DRE) e análise de margem.',
+                      buttonLabel: 'Exportar PDF',
+                      onButtonPressed: () {},
+                    ),
+                    StrategicFinancialFilters(
+                      from: _from,
+                      to: _to,
+                      regime: _regime,
+                      onDateRangeChanged: (newFrom, newTo) {
+                        setState(() {
+                          _from = newFrom;
+                          _to = newTo;
+                        });
+                        _fetchData();
+                      },
+                      onRegimeToggled: () {
+                        setState(() {
+                          _regime = _regime == 'cash' ? 'accrual' : 'cash';
+                        });
+                        _fetchData();
+                      },
+                    ),
+                  ],
                 ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: StatCard(
-                    label: 'Ponto de Equilíbrio',
-                    value: 'R\$ 168k',
-                    icon: Icons.track_changes_rounded,
-                    color: AppColors.accentPurple,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.cardDark,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'DRE DETALHADO — MARÇO 2024',
-                    style: GoogleFonts.inter(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white.withValues(alpha: 0.3),
-                      letterSpacing: 2,
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                sliver: SliverToBoxAdapter(
+                  child: FinancialDataQualityBanner(
+                    metadata: dre?.metadata,
+                    isLoading: isLoading,
+                    from: _from,
+                    onJump: (newFrom, newTo) {
+                      setState(() {
+                        _from = newFrom;
+                        _to = newTo;
+                      });
+                      _fetchData();
+                    },
+                  ),
+                ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              if (state is StrategicFinancialError)
+                SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Text(
+                        state.message,
+                        style: const TextStyle(color: Colors.redAccent),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  ...dreRows.map((row) {
-                    final bool isHeader = row['isHeader'] as bool? ?? false;
-                    final bool isDivider = row['isDivider'] as bool? ?? false;
-                    final double value = row['value'] as double;
-                    final Color? textColor = row['color'] as Color?;
-
-                    if (isDivider) {
-                      return Column(
-                        children: [
-                          const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                row['label'] as String,
-                                style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                ),
-                              ),
-                              Text(
-                                'R\$ ${value.toStringAsFixed(2)}',
-                                style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Divider(color: Colors.white24, height: 24),
-                        ],
-                      );
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            row['label'] as String,
-                            style: GoogleFonts.inter(
-                              fontSize: isHeader ? 14 : 13,
-                              fontWeight: isHeader ? FontWeight.w800 : FontWeight.w500,
-                              color: isHeader ? Colors.white : Colors.white.withValues(alpha: 0.6),
-                            ),
-                          ),
-                          Text(
-                            'R\$ ${value.toStringAsFixed(2)}',
-                            style: GoogleFonts.inter(
-                              fontSize: isHeader ? 14 : 13,
-                              fontWeight: isHeader ? FontWeight.w800 : FontWeight.w600,
-                              color: textColor ?? (value < 0 ? Colors.redAccent.withValues(alpha: 0.8) : Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ),
-          ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.05, end: 0),
-          
-          const SizedBox(height: 40),
-        ],
+                )
+              else
+                StrategicFinancialDreList(dre: dre, isLoading: isLoading),
+              const SliverToBoxAdapter(child: SizedBox(height: 40)),
+            ],
+          );
+        },
       ),
     );
   }
 }
+

@@ -24,7 +24,11 @@ import 'package:flutter_app/features/auth/presentation/bloc/bloc/auth_bloc.dart'
 import 'package:flutter_app/features/financial/data/datasources/financial_remote_datasource.dart';
 import 'package:flutter_app/features/financial/data/repositories/financial_repository_impl.dart';
 import 'package:flutter_app/features/financial/domain/repositories/financial_repository.dart';
-import 'package:flutter_app/features/financial/domain/usecases/financial_usecases.dart';
+import 'package:flutter_app/features/financial/domain/usecases/add_transaction_usecase.dart';
+import 'package:flutter_app/features/financial/domain/usecases/get_cash_flow_usecase.dart';
+import 'package:flutter_app/features/financial/domain/usecases/get_transactions_usecase.dart';
+import 'package:flutter_app/features/financial/domain/usecases/get_strategic_data_usecase.dart';
+import 'package:flutter_app/features/financial/presentation/bloc/strategic_financial_bloc.dart';
 import 'package:flutter_app/features/sales/data/datasources/sales_remote_datasource.dart';
 import 'package:flutter_app/features/sales/data/repositories/sales_repository_impl.dart';
 import 'package:flutter_app/features/sales/domain/repositories/sales_repository.dart';
@@ -195,6 +199,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetCashFlowUseCase(sl()));
   sl.registerLazySingleton(() => GetTransactionsUseCase(sl()));
   sl.registerLazySingleton(() => AddTransactionUseCase(sl()));
+  sl.registerLazySingleton(() => GetStrategicDataUseCase(sl()));
+
+  sl.registerFactory(
+    () => StrategicFinancialBloc(getStrategicDataUseCase: sl()),
+  );
 
   // Features - Sales
   sl.registerLazySingleton<ISalesRepository>(

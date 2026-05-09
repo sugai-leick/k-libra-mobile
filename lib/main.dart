@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_app/features/sales/presentation/bloc/sales_bloc.dart';
 import 'package:flutter_app/features/clients/presentation/bloc/total_clients_card_bloc.dart';
 import 'package:flutter_app/features/sales/presentation/bloc/total_sales_card_bloc.dart';
+import 'package:flutter_app/features/financial/presentation/bloc/strategic_financial_bloc.dart';
 import 'core/di/injection_container.dart' as di;
 import 'core/theme/app_theme.dart';
 import 'package:flutter_app/features/products/presentation/blocs/products_page/bloc/products_bloc.dart';
@@ -58,6 +59,7 @@ class KLibraApp extends StatelessWidget {
           create: (context) =>
               di.sl<InventoryBloc>()..add(FetchInventoryListEvent()),
         ),
+        BlocProvider(create: (context) => di.sl<StrategicFinancialBloc>()),
       ],
       child: MaterialApp(
         title: 'K-Libra System',
