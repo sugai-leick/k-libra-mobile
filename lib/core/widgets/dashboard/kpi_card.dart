@@ -2,10 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// A generic card widget used to display Key Performance Indicators (KPIs).
+///
+/// It features a glassmorphic design with a background glow effect,
+/// displaying a [label], a primary [value], and an [icon] associated with the metric.
 class KpiCard extends StatelessWidget {
+  /// The descriptive name of the metric (e.g., "Total Revenue").
   final String label;
+
+  /// The formatted value to be displayed (e.g., "$ 12,000").
   final String value;
+
+  /// The icon representing the metric.
   final IconData icon;
+
+  /// The primary color used for the icon and the background glow effect.
   final Color color;
 
   const KpiCard({
