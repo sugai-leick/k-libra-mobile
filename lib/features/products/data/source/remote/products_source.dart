@@ -4,11 +4,13 @@ import 'package:flutter_app/core/services/http_service.dart';
 import 'package:flutter_app/core/usecase/params/no_params.dart';
 import 'package:flutter_app/features/products/data/model/create_product_model.dart';
 import 'package:flutter_app/features/products/data/model/product_model.dart';
+import 'package:flutter_app/features/products/data/model/product_variant_model.dart';
 import 'package:flutter_app/features/products/domain/entity/product.dart';
 
 abstract class IProductsSource {
   ///retorna uma lista de [Produtos]
   Future<List<ProductModel>> getProducts(NoParams params);
+  Future<List<ProductVariantModel>> getVariants(NoParams params);
   Future<Success> addProduct(CreateProductModel model);
 }
 
@@ -31,6 +33,21 @@ class ProductsSource implements IProductsSource {
       return list;
     } catch (e) {
       debugPrint('Product Source error >> $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<ProductVariantModel>> getVariants(NoParams params) async {
+    try {
+      final response = await _httpService.get('/products/variants');
+      final List<dynamic> jsonList = response.data;
+
+      return jsonList.map((json) {
+        return ProductVariantModel.fromJson(json as Map<String, dynamic>);
+      }).toList();
+    } catch (e) {
+      debugPrint('Product Variants Source error >> $e');
       rethrow;
     }
   }

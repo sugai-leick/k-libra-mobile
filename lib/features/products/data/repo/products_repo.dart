@@ -6,6 +6,7 @@ import 'package:flutter_app/core/usecase/params/no_params.dart';
 import 'package:flutter_app/features/products/data/model/create_product_model.dart';
 import 'package:flutter_app/features/products/data/source/remote/products_source.dart';
 import 'package:flutter_app/features/products/domain/entity/product.dart';
+import 'package:flutter_app/features/products/domain/entity/product_variant.dart';
 import 'package:flutter_app/features/products/domain/repo/i_products_repo.dart';
 import 'package:flutter_app/features/products/domain/usecases/params/create_product_params.dart';
 
@@ -40,9 +41,15 @@ class ProductsRepo implements IProductsRepo {
   }
 
   @override
-  Future<Either<Failure, Unit>> getProductVariant() {
-    // TODO: implement getProductVariant
-    throw UnimplementedError();
+  Future<Either<Failure, List<ProductVariant>>> getVariants(
+    NoParams params,
+  ) async {
+    try {
+      final result = await _source.getVariants(params);
+      return Right(result);
+    } on Exception catch (e) {
+      return Left(ProductFailure(msg: 'Erro ao buscar variantes: $e'));
+    }
   }
 
   @override

@@ -1,9 +1,11 @@
 import 'package:flutter_app/core/services/remember_email_service.dart';
+import 'package:flutter_app/features/inventory/domain/usecases/fetch_products_usecase.dart';
 import 'package:flutter_app/features/products/data/source/remote/products_source.dart';
 import 'package:flutter_app/features/products/data/repo/products_repo.dart';
 import 'package:flutter_app/features/products/domain/repo/i_products_repo.dart';
 import 'package:flutter_app/features/products/domain/usecases/create_product_usecase.dart';
 import 'package:flutter_app/features/products/domain/usecases/get_products_usecase.dart';
+import 'package:flutter_app/features/products/domain/usecases/get_variants_usecase.dart';
 import 'package:flutter_app/features/products/presentation/blocs/products_page/bloc/products_bloc.dart';
 import 'package:flutter_app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:flutter_app/features/inventory/data/datasources/inventory_remote_datasource.dart';
@@ -45,6 +47,7 @@ import 'package:flutter_app/features/clients/domain/usecases/get_students_usecas
 import 'package:flutter_app/features/sales/presentation/bloc/sales_form_bloc.dart';
 import 'package:flutter_app/features/sales/presentation/bloc/sales_bloc.dart';
 import 'package:flutter_app/features/sales/presentation/bloc/total_sales_card_bloc.dart';
+import 'package:flutter_app/features/inventory/presentation/bloc/products_list/bloc/products_list_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
@@ -282,6 +285,21 @@ Future<void> init() async {
     () => ProductsBloc(
       createProduct: sl<CreateProductUsecase>(),
       getProducts: sl<GetProductsUsecase>(),
+    ),
+  );
+
+  sl.registerLazySingleton<FetchProductsUsecase>(
+    () => FetchProductsUsecase(repo: sl<IProductsRepo>()),
+  );
+
+  sl.registerLazySingleton<GetVariantsUsecase>(
+    () => GetVariantsUsecase(repo: sl<IProductsRepo>()),
+  );
+
+  sl.registerFactory<ProductsListBloc>(
+    () => ProductsListBloc(
+      fetchProductsUsecase: sl<FetchProductsUsecase>(),
+      getVariantsUsecase: sl<GetVariantsUsecase>(),
     ),
   );
 }

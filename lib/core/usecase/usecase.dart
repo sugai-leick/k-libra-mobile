@@ -1,10 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_app/core/failures/failure.dart';
-
+import 'package:flutter_app/core/typedefs/return_future.dart';
+import 'package:flutter_app/core/typedefs/return_stream.dart';
 
 abstract class Usecase<Params, ReturnType> {
   /// Executa a lógica de negócio do caso de uso.
-  Future<Either<Failure, ReturnType>> call(Params params);
+  //Future<Either<Failure, ReturnType>> call(Params params);
+  ReturnFuture<ReturnType> call(Params params);
 }
 
 /// Contrato para Casos de Uso (Usecases) que retornam um Stream (Reativo).
@@ -15,5 +17,5 @@ abstract class Usecase<Params, ReturnType> {
 /// [ReturnType] - O tipo de dado emitido pelo stream.
 abstract class StreamUsecase<Params, ReturnType> {
   /// Retorna um stream de dados reativos.
-  Stream<Either<Failure, ReturnType>> call(Params params);
+  ReturnStream<ReturnType> call(Params params);
 }

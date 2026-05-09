@@ -19,4 +19,5 @@ abstract class InventoryRepository {
   Future<Either<Failure, InventoryCollection>> fetchInventory();
   Future<Either<Failure, void>> registerHardware(AddHardwareDto dto);
   Future<Either<Failure, void>> registerTransaction(InventoryTransactionDto dto);
+  
 }
