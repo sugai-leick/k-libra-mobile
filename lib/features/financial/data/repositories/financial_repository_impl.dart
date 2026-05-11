@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_app/core/failures/app_exception.dart';
 import 'package:flutter_app/core/failures/failure.dart';
+import 'package:flutter_app/core/typedefs/return_future.dart';
 import 'package:flutter_app/features/financial/data/datasources/financial_remote_datasource.dart';
 import 'package:flutter_app/features/financial/data/models/financial_models.dart';
 import 'package:flutter_app/features/financial/domain/entities/financial_entities.dart';
@@ -13,7 +14,7 @@ class FinancialRepositoryImpl implements IFinancialRepository {
   FinancialRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, CashFlow>> getCashFlow() async {
+  ReturnFuture<CashFlow> getCashFlow() async {
     try {
       final cashFlowModel = await remoteDataSource.getCashFlow();
       return Right(cashFlowModel);
@@ -25,7 +26,7 @@ class FinancialRepositoryImpl implements IFinancialRepository {
   }
 
   @override
-  Future<Either<Failure, List<FinancialTransaction>>> getTransactions() async {
+  ReturnFuture<List<FinancialTransaction>> getTransactions() async {
     try {
       final transactions = await remoteDataSource.getTransactions();
       return Right(transactions);
@@ -37,7 +38,7 @@ class FinancialRepositoryImpl implements IFinancialRepository {
   }
 
   @override
-  Future<Either<Failure, void>> addTransaction(FinancialTransaction transaction) async {
+  ReturnFuture<Unit> addTransaction(FinancialTransaction transaction) async {
     try {
       final model = FinancialTransactionModel(
         id: transaction.id,
@@ -48,7 +49,7 @@ class FinancialRepositoryImpl implements IFinancialRepository {
         date: transaction.date,
       );
       await remoteDataSource.addTransaction(model);
-      return const Right(null);
+      return const Right(unit);
     } on AppException catch (e) {
       return Left(ServerFailure(msg: e.message));
     } catch (e) {
@@ -57,7 +58,7 @@ class FinancialRepositoryImpl implements IFinancialRepository {
   }
 
   @override
-  Future<Either<Failure, DreEntity>> getStrategicData({
+  ReturnFuture<DreEntity> getStrategicData({
     required String from,
     required String to,
     required String regime,
